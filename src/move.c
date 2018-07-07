@@ -811,7 +811,7 @@ void get_capture(
 											// loop through diagonal
 											int _piece, _to;
 											for (int i = 0; i < c; i += 1){
-												if (capture) break;												
+												if (capture) break;											
 												_piece = _diagonal[i];
 												if (board[_piece].value & (color ^ CHANGECOLOR)){
 													for (int k = i + 1; k < c; k += 1){

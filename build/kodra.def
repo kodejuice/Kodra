@@ -1,0 +1,6 @@
+LIBRARY kodra.dll
+
+EXPORTS
+enginecommand
+getmove
+islegal

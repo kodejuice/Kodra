@@ -233,7 +233,7 @@ int negamax(
 
 			sortVals[i] += info->History[frm][to];
 
-			mx = max(0, sortVals[i]);
+			mx = max(mx, sortVals[i]);
 		}
 
 		if (mx > 0) {

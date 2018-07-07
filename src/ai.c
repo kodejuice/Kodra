@@ -259,7 +259,7 @@ int negamax(
 				x = -negamax(game, d, depth-1, -color, -beta, -a, best, TTable_deep, TTable_big, info, play, nodes, iid);
 			} else {
 				// LMR
-				if (i > 1 && depth > 3 && beta-alpha <= 1) {
+				if (i > 3 && depth > 3 && beta-alpha <= 1) {
 					x = -negamax(game, d, depth-2, -color, -a-1, -a, best, TTable_deep, TTable_big, info, play, nodes, iid);
 				} else {
 					x = alpha + 1;

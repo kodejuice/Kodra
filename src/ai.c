@@ -203,32 +203,32 @@ int negamax(
 	int sortVals[moves.length];
 
 	Move move;
-	int frm, to;//, piece;
+	int frm, to, piece;
 
 	if (moves.length > 1 && depth > 1){
-		// one_capt counter_move = info->counterMoves[(color == -1)][game->prev_from][game->prev_to];
+		one_capt counter_move = info->counterMoves[(color == -1)][game->prev_from][game->prev_to];
 
 		for (int i=0; i<moves.length; i+=1){
 			move = moves.moves[i], sortVals[i] = 0;
 
 			frm = move.list[0].from,
 			to = move.list[move.length-1].to;
-			// piece = game->board[frm].value;
+			piece = game->board[frm].value;
 
 			if (frm == best_from && to == best_to){ // move from hashtable
-				sortVals[i] = 888888;
+				sortVals[i] += 888888;
 			}
-			// else if ((piece & MAN) && ((to>=0&&to<=3&&color==-1) || (to>=28&&to<=31&&color==1))) { // promotion
-			// 	sortVals[i] = 888880;
-			// }
-			// else if (frm == counter_move.from && to == counter_move.to) { // counter-move heuristic
-			// 	sortVals[i] = 777777;
-			// }
-			else if (frm == info->killer1_from[depth] && to == info->killer1_to[depth]) { // killer(primary)
-				sortVals[i] = 77777;
+			if ((piece & MAN) && ((to>=0&&to<=3&&color==-1) || (to>=28&&to<=31&&color==1))) { // promotion
+				sortVals[i] += 888880;
 			}
-			else if (frm == info->killer2_from[depth] && to == info->killer2_to[depth]) { // killer(secondary)
-				sortVals[i] = 66666;
+			if (frm == counter_move.from && to == counter_move.to) { // counter-move heuristic
+				sortVals[i] += 777777;
+			}
+			if (frm == info->killer1_from[depth] && to == info->killer1_to[depth]) { // killer(primary)
+				sortVals[i] += 77777;
+			}
+			if (frm == info->killer2_from[depth] && to == info->killer2_to[depth]) { // killer(secondary)
+				sortVals[i] += 66666;
 			}
 
 			sortVals[i] += info->History[frm][to];
@@ -295,7 +295,7 @@ int negamax(
 	frm = move.list[0].from, to = move.list[move.length-1].to;
 
 	addhistory(info, depth, frm, to, true);
-	// addcounter(info, color, game->prev_from, game->prev_to, frm, to);
+	addcounter(info, color, game->prev_from, game->prev_to, frm, to);
 
 	// Add to TTable
 	hash_flag = ((max <= alpha) ? UPPER_BOUND : ((max >= beta) ? LOWER_BOUND : EXACT_SCORE));
@@ -540,7 +540,7 @@ int evaluate(Gamestate* game, int color, int depth) {
 	int nbmr, nbkr, nwmr, nwkr;  // pieces on right side
 
 	int code=0, backrank;
-	static int value[17] = {0,0,0,0,0,1,256,0,0,16,4096,0,0,0,0,0,4096 /*:)*/};
+	static int value[17] = {0,0,0,0,0,1,256,0,0,16,4096,0,0,0,0,0,0};
 
 	const int turn = 3;   // color to move gets +turn
 	const int brv = 3;    // multiplier for back rank

@@ -203,7 +203,7 @@ int negamax(
 	int sortVals[moves.length];
 
 	Move move;
-	int frm, to, piece;
+	int frm, to, piece, mx=0;
 
 	if (moves.length > 1 && depth > 1){
 		one_capt counter_move = info->counterMoves[(color == -1)][game->prev_from][game->prev_to];
@@ -232,8 +232,13 @@ int negamax(
 			}
 
 			sortVals[i] += info->History[frm][to];
+
+			mx = max(0, sortVals[i]);
 		}
-		sort_moves(moves.moves, sortVals, 0, moves.length-1);
+
+		if (mx > 0) {
+			sort_moves(moves.moves, sortVals, 0, moves.length-1);
+		}
 	}
 
 

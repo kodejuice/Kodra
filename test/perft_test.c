@@ -10,29 +10,6 @@
 
 #include "../src/game.c"
 
-/*
-	Perft values
-
-	From  starting position
-
-	Perft(0) =  1                0ms
-	Perft(1) =  7                0ms
-	Perft(2) =  49               0ms
-	Perft(3) =  302              0ms
-	Perft(4) =  1,469            0ms
-	Perft(5) =  7,482            2ms
-	Perft(6) =  37,986          15ms
-	Perft(7) =  190,146 	    78ms
-	Perft(8) =  929,905        403ms
-	Perft(9) =  4,570,667       1.9s
-	Perft(10) = 22,461,267        9s
-
-	Nodes per second = 2,269,934
-
-	Tested on a Core 2 Duo @ 1.80Ghz   < Multi-core disabled >
- */
-
-
 
 u64 Perft(Gamestate * game, int depth){
 	Movelist * moves = &(Movelist){0};

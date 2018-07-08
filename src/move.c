@@ -1111,7 +1111,7 @@ bool is_prime(long n){
 void insertion_sort( Move arr[], int sortVals[], int first_index, int last_index) {
 	Move mtmp;
 	register int itmp, j;
-	for (int i = first_index+1; i < last_index; i++) {
+	for (int i = first_index+1; i < last_index; i+=1) {
 		j = i;
 		while (j > 0 && sortVals[j] > sortVals[j-1]) {
 			swap_move(&arr[j], &arr[j-1]);
@@ -1132,13 +1132,13 @@ void quick_sort( Move array[], int sortVals[], int first_index, int last_index) 
 	long pivot = sortVals[(i+j)>>1];
 
 	do {
-		while (sortVals[i] > pivot) i++;
-		while (sortVals[j] < pivot) j--;
+		while (sortVals[i] > pivot) i+=1;
+		while (sortVals[j] < pivot) j-=1;
 		if (i < j) {
 			swap_short(&sortVals[i], &sortVals[j]);
 			swap_move(&array[i], &array[j]);
 		}
-		if (i <= j) i++, j--;
+		if (i <= j) i+=1, j-=1;
 	} while (i <= j);
 
 	if (first_index < j) quick_sort(array, sortVals, first_index, j);

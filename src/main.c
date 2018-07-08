@@ -143,7 +143,7 @@ int WINAPI enginecommand (char str[256], char reply[1024]) {
 		}
 
 		if (strcmp (param1, "hashsize") == 0) {
-			sprintf (reply, "%d",  BIG_HASHTABLE_SIZE/ts);
+			sprintf (reply, "Deep tt size => %dmb\nBig tt size %dmb", DEEP_HASHTABLE_SIZE/ts, BIG_HASHTABLE_SIZE/ts);
 			return 1;
 		} 
 	}
@@ -154,10 +154,12 @@ int WINAPI enginecommand (char str[256], char reply[1024]) {
 			mb = strtol(param2, &e_str, 10) - 2;
 			if (mb < 1) return 0;
 
-			mb = min(mb, 1024);
+			mb = min(mb, 128);
 
 			BIG_HASHTABLE_SIZE = mb * ts;
-			DEEP_HASHTABLE_SIZE = BIG_HASHTABLE_SIZE / 2;
+
+			DEEP_HASHTABLE_SIZE = 0.4 * BIG_HASHTABLE_SIZE;
+			BIG_HASHTABLE_SIZE = 0.6 * BIG_HASHTABLE_SIZE;
 
 			BIG_HASHTABLE_SIZE = make_prime(BIG_HASHTABLE_SIZE);
 			DEEP_HASHTABLE_SIZE = make_prime(DEEP_HASHTABLE_SIZE);

@@ -154,7 +154,7 @@ int WINAPI enginecommand (char str[256], char reply[1024]) {
 			mb = strtol(param2, &e_str, 10) - 2;
 			if (mb < 1) return 0;
 
-			mb = min(mb, 256);
+			mb = min(mb, 1024);
 
 			BIG_HASHTABLE_SIZE = mb * ts;
 			DEEP_HASHTABLE_SIZE = BIG_HASHTABLE_SIZE / 2;

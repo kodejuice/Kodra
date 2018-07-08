@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -lm -O3 -fomit-frame-pointer -march=native -g -Wall -std=c99
+CFLAGS = -static-libgcc -lm -O3 -fomit-frame-pointer -march=native -g -Wall -std=c99
 
 SRC_P = src/main.c
 SRC_TEST = test/unit_test.c

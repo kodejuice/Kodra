@@ -39,8 +39,8 @@ typedef unsigned long long u64;
 
 // Simple Array
 typedef struct array {
-	int length;
-	int a[10];
+	short length;
+	short a[10];
 } Array;
 
 
@@ -50,7 +50,7 @@ typedef struct array {
 
 // represents each square on our Game board, see below
 typedef struct squarefield {
-	int value : MAX_BIT;
+	short value : MAX_BIT;
 	// the max value on the board dont exceed 5bits
 	//  FREE <16 (5bits)>
 } field;
@@ -58,10 +58,10 @@ typedef struct squarefield {
 // Game board
 typedef struct Gamestate {
 	field board[BOARD_SIZE];
-	int turn: 1;                    // who to play, 0=>BLACK, 1=>WHITE
+	short turn: 1;                    // who to play, 0=>BLACK, 1=>WHITE
 	u64 zobristKey;                 // zobrist key of the board
 
-	int prev_from, prev_to;			// the move that got us to the current gamestate
+	short prev_from, prev_to;			// the move that got us to the current gamestate
 } Gamestate;
 
 
@@ -71,20 +71,20 @@ typedef struct Gamestate {
 
 // a single capture/move
 typedef struct move_or_capture {
-	int from: MAX_BIT;
-	int piece: MAX_BIT;              // set to zero if used for a Move (non capture)
-	int to: MAX_BIT;
+	short from: MAX_BIT;
+	short piece: MAX_BIT;              // set to zero if used for a Move (non capture)
+	short to: MAX_BIT;
 } one_capt;
 
 // complete capture/move 
 typedef struct Move {
 	bool is_capture: 1;
 
-	int length: 6;						  // move length
+	short length: 6;						  // move length
 	struct move_or_capture list[10];	  // moves
 
 	field captured[10];					  // captured pieces
-	int l;								  // `captured pieces` array length
+	short l;								  // `captured pieces` array length
 
 	bool is_promotion;					  // does the move make the piece a KING ?
 
@@ -99,7 +99,7 @@ typedef struct Move {
 
 // for both Moves and Captures
 typedef struct Movelist {
-	int length: 7;
+	short length: 7;
 	Move moves[MAXMOVES];
 } Movelist;
 
@@ -122,23 +122,23 @@ typedef struct Movelist {
 u64 rand64();
 
 bool is_prime(long);
-int make_prime(int);
+short make_prime(short);
 
 void domove(Gamestate *, Move*);
 void undomove(Gamestate *, Move*);
 
-int generate_moves(field board[BOARD_SIZE], int color, Movelist*);
-int generate_captures(field board[BOARD_SIZE], int color, Movelist*);
-int generate_all_moves(Gamestate *, int turn, Movelist*);
+short generate_moves(field board[BOARD_SIZE], short color, Movelist*);
+short generate_captures(field board[BOARD_SIZE], short color, Movelist*);
+short generate_all_moves(Gamestate *, short turn, Movelist*);
 
-void get_capture(field[BOARD_SIZE], int color, int who, one_capt*, int jumps, Move, Movelist*);
+void get_capture(field[BOARD_SIZE], short color, short who, one_capt*, short jumps, Move, Movelist*);
 
-bool can_capture(field board[BOARD_SIZE], int color, int from, int piece, int to);
+bool can_capture(field board[BOARD_SIZE], short color, short from, short piece, short to);
 
 void init_board_hash(Gamestate *);
-void sort_moves(Move*, int*, int, int);
+void sort_moves(Move*, short*, short, short);
 void updatehashkey(Gamestate* game);
-int idx(int);
+short idx(short);
 
 void quick_sort(Move array[], int sortVals[], int first_index, int last_index);
 
@@ -306,8 +306,8 @@ void init_board_hash(Gamestate* game){
 	srand(time(NULL));
 
 	// create hash function
-	for (int i = 0; i <= BOARD_SIZE; i += 1) {
-		for (int j = 0; j <= 16; j+=1) {
+	for (short i = 0; i <= BOARD_SIZE; i += 1) {
+		for (short j = 0; j <= 16; j+=1) {
 			zobristNumbers[i][j] = rand64();
 		}
 	}
@@ -323,7 +323,7 @@ void init_board_hash(Gamestate* game){
 inline void updatehashkey(Gamestate* game){
 
 	u64 key = 0;
-	int piece, i = 0;
+	short piece, i = 0;
 
 	piece = game->board[i].value; if (piece!=FREE) key ^= zobristNumbers[i][piece]; i++;
 	piece = game->board[i].value; if (piece!=FREE) key ^= zobristNumbers[i][piece]; i++;
@@ -358,7 +358,7 @@ inline void updatehashkey(Gamestate* game){
 	piece = game->board[i].value; if (piece!=FREE) key ^= zobristNumbers[i][piece]; i++;
 	piece = game->board[i].value; if (piece!=FREE) key ^= zobristNumbers[i][piece]; i++;
 
-	// for (int i = 0; i <= BOARD_SIZE; i += 1){
+	// for (short i = 0; i <= BOARD_SIZE; i += 1){
 	// 	piece = game->board[i].value;
 
 	// 	if (piece != FREE) {
@@ -379,7 +379,7 @@ inline void updatehashkey(Gamestate* game){
 u64 rand64(){
 	u64 r = 0;
 
-	for (int i = 0; i < 5; ++i) {
+	for (short i = 0; i < 5; ++i) {
 		r = (r << 15) | (rand() & 0x7FFF);
 	}
 
@@ -395,11 +395,11 @@ u64 rand64(){
 
     returns number of generated captures/moves
  */
-inline int generate_all_moves(Gamestate * game, int turn, Movelist* all_moves){
+inline short generate_all_moves(Gamestate * game, short turn, Movelist* all_moves){
 	all_moves->length = 0;
 
-	int color = turn ? WHITE : BLACK;
-	int n = generate_captures(game->board, color, all_moves);
+	short color = turn ? WHITE : BLACK;
+	short n = generate_captures(game->board, color, all_moves);
 
 	if (!n){
 		n = generate_moves(game->board, color, all_moves);
@@ -418,15 +418,15 @@ inline int generate_all_moves(Gamestate * game, int turn, Movelist* all_moves){
   returns the number of generated moves
 */
 
-int generate_moves(field board[BOARD_SIZE], int color, Movelist* all_moves){
+short generate_moves(field board[BOARD_SIZE], short color, Movelist* all_moves){
 
 	all_moves->length = all_moves->length | 0;
 
-	for (int i = 0; i < BOARD_SIZE; i += 1){
+	for (short i = 0; i < BOARD_SIZE; i += 1){
 		if ((board[i].value & MAN) && (board[i].value & color)){
 			// get moves for (color|MAN)
 
-			int who = (color == WHITE); // 0 => BLACK, 1 => WHITE
+			short who = (color == WHITE); // 0 => BLACK, 1 => WHITE
 
 			if (MAN_MOVES[i][who][0]){
 				char moves[2] = "";
@@ -435,7 +435,7 @@ int generate_moves(field board[BOARD_SIZE], int color, Movelist* all_moves){
 
 				// if that square is free then its a valid move
 				//  add to all_moves
-				if (board[(int) moves[0] - 1].value == FREE) {
+				if (board[(short) moves[0] - 1].value == FREE) {
 					// Move move = M(i, moves[0] - 1);
 					all_moves->moves[all_moves->length++] = M(i, moves[0] - 1);
 				}
@@ -444,7 +444,7 @@ int generate_moves(field board[BOARD_SIZE], int color, Movelist* all_moves){
 					moves[1] = MAN_MOVES[i][who][1];
 
 					// if the square is free then its a valid move
-					if (board[(int) moves[1] - 1].value == FREE) {
+					if (board[(short) moves[1] - 1].value == FREE) {
 						// Move move = M(i, moves[1] - 1);
 						all_moves->moves[all_moves->length++] = M(i, moves[1] - 1);
 					}
@@ -453,15 +453,15 @@ int generate_moves(field board[BOARD_SIZE], int color, Movelist* all_moves){
 		} else if((board[i].value & KING) && (board[i].value & color)){
 			// get moves for (color|KING)
 
-			for (int l = 0; l < 4; l += 1){
+			for (short l = 0; l < 4; l += 1){
 				if (KING_MOVES[i][l][0]){
-					for (int j = 0; j < 8; j += 1){
+					for (short j = 0; j < 8; j += 1){
 						if (!KING_MOVES[i][l][j])
 							break;
 
 						// if that square is free then its a valid move
 						//  add to all_moves
-						if (board[(int) KING_MOVES[i][l][j] - 1].value == FREE) {
+						if (board[(short) KING_MOVES[i][l][j] - 1].value == FREE) {
 							// Move move = M(i, KING_MOVES[i][l][j]-1);
 							all_moves->moves[all_moves->length++] = M(i, KING_MOVES[i][l][j]-1);
 						} else {
@@ -487,16 +487,16 @@ int generate_moves(field board[BOARD_SIZE], int color, Movelist* all_moves){
   returns the number of generated captures
 */
 
-int generate_captures(field board[BOARD_SIZE], int color, Movelist* all_captures){
+short generate_captures(field board[BOARD_SIZE], short color, Movelist* all_captures){
 
 	all_captures->length = all_captures->length | 0;
 
-	for (int i = 0; i < BOARD_SIZE; i += 1){
+	for (short i = 0; i < BOARD_SIZE; i += 1){
 		if ((board[i].value & MAN) && (board[i].value & color)){
 			// get captures for (color|MAN)
 			
-			int from, piece, to;
-			for (int j = 0; j < 4; j += 1){
+			short from, piece, to;
+			for (short j = 0; j < 4; j += 1){
 				if (MAN_CAPTURES[i][j][0]){
 					from = i,
 					piece = MAN_CAPTURES[i][j][0] - 1,
@@ -514,36 +514,36 @@ int generate_captures(field board[BOARD_SIZE], int color, Movelist* all_captures
 		else if((board[i].value & KING) && (board[i].value & color)){
 			// get captures for (color|KING)
 			
-			int from;
-			for (int l = 0; l < 4; l += 1){
+			short from;
+			for (short l = 0; l < 4; l += 1){
 				if (KING_MOVES[i][l][0]){
 					from = i;
 
 					char diagonal[7];
 					short c = 0; // diagonal length
-					for (int j = 0; j < 8; j += 1){  // loop through diagonal
-						if ((int) KING_MOVES[i][l][j]){
-							diagonal[c++] = (int) KING_MOVES[i][l][j] - 1; // add square
+					for (short j = 0; j < 8; j += 1){  // loop through diagonal
+						if ((short) KING_MOVES[i][l][j]){
+							diagonal[c++] = (short) KING_MOVES[i][l][j] - 1; // add square
 						}
 
 						if (j >= 1){
 							// break if previous and current square in diagonal are not free
-							if (board[(int) diagonal[c-2]].value != FREE && board[(int) diagonal[c-1]].value != FREE){
+							if (board[(short) diagonal[c-2]].value != FREE && board[(short) diagonal[c-1]].value != FREE){
 								c -= 2; // prevent looping through them
 								break;
 							}
 						} else if (j == 0){
 							// break, if capturing piece color leads this diagonal
-							if (board[(int) diagonal[0]].value & color){
+							if (board[(short) diagonal[0]].value & color){
 								c = 0;
 								break;
 							}
 						}
 					}
 
-					int piece, to;
+					short piece, to;
 					bool has_capture = false;
-					for (int j = 0; j < c; j += 1){
+					for (short j = 0; j < c; j += 1){
 						piece = diagonal[j];
 
 						// only check for a valid capture if the current square
@@ -554,10 +554,10 @@ int generate_captures(field board[BOARD_SIZE], int color, Movelist* all_captures
 								break;
 							}
 
-							int capturables = 0;
+							short capturables = 0;
 							Array * non_captble = &(Array){0};
 
-							for (int k = j + 1; k < c; k += 1){
+							for (short k = j + 1; k < c; k += 1){
 								to = diagonal[k];
 
 								if (board[to].value != FREE){
@@ -575,31 +575,31 @@ int generate_captures(field board[BOARD_SIZE], int color, Movelist* all_captures
 								//  if there are, we'll land here, else add square to an array
 								//  for later iteration (if there're no `piece` here)
 								{
-									int _from_ = to;
-									for (int l = 0; l < 4; l += 1){
+									short _from_ = to;
+									for (short l = 0; l < 4; l += 1){
 										if (capture) break;
 										if (KING_MOVES[to][l][0]){
-											int _diagonal[7]; short c = 0;
-											for (int j = 0; j < 8; j += 1){
+											short _diagonal[7]; short c = 0;
+											for (short j = 0; j < 8; j += 1){
 												if (capture) break;
-												if ((int) KING_MOVES[to][l][j]){
-													_diagonal[c++] = (int) KING_MOVES[to][l][j] - 1;
+												if ((short) KING_MOVES[to][l][j]){
+													_diagonal[c++] = (short) KING_MOVES[to][l][j] - 1;
 													if (_diagonal[c-1] == _from_){
 														c = 0; break;
-													} else if (j >= 1 && board[(int) _diagonal[c-2]].value != FREE && board[(int) _diagonal[c-1]].value != FREE){
+													} else if (j >= 1 && board[(short) _diagonal[c-2]].value != FREE && board[(short) _diagonal[c-1]].value != FREE){
 														c -= 2; break;
-													} else if (j == 0 && board[(int) _diagonal[0]].value & color){
+													} else if (j == 0 && board[(short) _diagonal[0]].value & color){
 														c = 0; break;
 													}
 												}
 											}
 											// loop through diagonal
-											int _piece, _to;
-											for (int i = 0; i < c; i += 1){
+											short _piece, _to;
+											for (short i = 0; i < c; i += 1){
 												_piece = _diagonal[i];
 												if (capture) break;
 												if (board[_piece].value & (color ^ CHANGECOLOR)){
-													for (int k = i + 1; k < c; k += 1){
+													for (short k = i + 1; k < c; k += 1){
 														if (capture) break;
 														_to = _diagonal[k];
 														if (piece == _piece || board[_to].value != FREE){
@@ -628,7 +628,7 @@ int generate_captures(field board[BOARD_SIZE], int color, Movelist* all_captures
 							} // -loop
 
 							if (!capturables){
-								for (int i = 0; i < non_captble->length; i++){
+								for (short i = 0; i < non_captble->length; i++){
 									get_capture(
 										board, color, KING, &C(from, piece, non_captble->a[i]),
 										1, (Move){}, all_captures
@@ -654,18 +654,18 @@ int generate_captures(field board[BOARD_SIZE], int color, Movelist* all_captures
   Get all possible captures from one capture
  */
 void get_capture(
-	field board[BOARD_SIZE], int color, int who, one_capt * _capt, int jumpcount,
+	field board[BOARD_SIZE], short color, short who, one_capt * _capt, short jumpcount,
 	Move capt, Movelist* all_capts
 ){
 
-	int from = _capt->from,
+	short from = _capt->from,
 		piece = _capt->piece,
 		to = _capt->to;
 
 	capt.list[capt.length++] =  C(from, piece, to);
 
 	// do single-capture
-	int _piece = board[piece].value;
+	short _piece = board[piece].value;
 	board[to].value = board[from].value;
 	board[piece].value = board[from].value = FREE;
 
@@ -693,12 +693,12 @@ void get_capture(
 
 	// check if MAN can capture again
 	if (who & MAN){
-		int _from = to; // where the MAN is now after capture
+		short _from = to; // where the MAN is now after capture
 
-		int available_captures = 0;
-		for (int i = 0; i < 4; i += 1){
+		short available_captures = 0;
+		for (short i = 0; i < 4; i += 1){
 			if (MAN_CAPTURES[_from][i][0]){
-				int to = MAN_CAPTURES[_from][i][1] - 1,
+				short to = MAN_CAPTURES[_from][i][1] - 1,
 					piece = MAN_CAPTURES[_from][i][0] - 1;
 
 				// we cant go back to where we came from
@@ -723,19 +723,19 @@ void get_capture(
 	else if (who & KING){
 		// check if KING can capture again
 		
-		int _from = to; // where the KING is now after capture
+		short _from = to; // where the KING is now after capture
 
-		int available_captures = 0;
+		short available_captures = 0;
 
 		{
-			for (int l = 0; l < 4; l += 1){
+			for (short l = 0; l < 4; l += 1){
 				if (KING_MOVES[_from][l][0]){
 
-					int diagonal[7];
+					short diagonal[7];
 					short c = 0;
-					for (int j = 0; j < 8; j += 1){
-						if ((int) KING_MOVES[_from][l][j]){
-							diagonal[c++] = (int) KING_MOVES[_from][l][j] - 1;
+					for (short j = 0; j < 8; j += 1){
+						if ((short) KING_MOVES[_from][l][j]){
+							diagonal[c++] = (short) KING_MOVES[_from][l][j] - 1;
 
 							// prevent re-capturing on the same diagonal
 							if (diagonal[c-1] == from){
@@ -744,14 +744,14 @@ void get_capture(
 							}
 							if (j >= 1){
 								// break if previous and current square in diagonal are not free
-								if (board[(int) diagonal[c-2]].value != FREE && board[(int) diagonal[c-1]].value != FREE){
+								if (board[(short) diagonal[c-2]].value != FREE && board[(short) diagonal[c-1]].value != FREE){
 									c -= 2; // prevent looping through them
 									break;
 								}
 							} else if (j == 0){
 								// break, if capturing piece color leads this diagonal
 								// there cant be any possible capture
-								if (board[(int) diagonal[0]].value & color){
+								if (board[(short) diagonal[0]].value & color){
 									c = 0;
 									break;
 								}
@@ -759,9 +759,9 @@ void get_capture(
 						}
 					}
 
-					int piece, to;
+					short piece, to;
 					bool has_capture = false;
-					for (int j = 0; j < c; j += 1){
+					for (short j = 0; j < c; j += 1){
 						piece = diagonal[j];
 
 						if ((board[_from].value & color) && (board[piece].value & (color ^ CHANGECOLOR))){
@@ -769,10 +769,10 @@ void get_capture(
 								break;
 							}
 
-							int capturables = 0;
+							short capturables = 0;
 							Array * non_captble = &(Array){0};
 
-							for (int k = j + 1; k < c; k += 1){
+							for (short k = j + 1; k < c; k += 1){
 								to = diagonal[k];
 
 								if (board[to].value != FREE){
@@ -789,32 +789,32 @@ void get_capture(
 								//  if there are, we'll land here, else add square to an array
 								//  for later iteration (if there're no `piece` here)
 								{
-									int _from_ = to;
+									short _from_ = to;
 
-									for (int l = 0; l < 4; l += 1){
+									for (short l = 0; l < 4; l += 1){
 										if (capture) break;										
 										if (KING_MOVES[to][l][0]){
-											int _diagonal[7]; short c = 0;
-											for (int j = 0; j < 8; j += 1){
+											short _diagonal[7]; short c = 0;
+											for (short j = 0; j < 8; j += 1){
 												if (capture) break;
-												if ((int) KING_MOVES[to][l][j]){
-													_diagonal[c++] = (int) KING_MOVES[to][l][j] - 1;
+												if ((short) KING_MOVES[to][l][j]){
+													_diagonal[c++] = (short) KING_MOVES[to][l][j] - 1;
 													if (_diagonal[c-1] == _from_){
 														c = 0; break;
-													} else if (j >= 1 && board[(int) _diagonal[c-2]].value != FREE && board[(int) _diagonal[c-1]].value != FREE){
+													} else if (j >= 1 && board[(short) _diagonal[c-2]].value != FREE && board[(short) _diagonal[c-1]].value != FREE){
 														c -= 2; break;
-													} else if (j == 0 && board[(int) _diagonal[0]].value & color){
+													} else if (j == 0 && board[(short) _diagonal[0]].value & color){
 														c = 0; break;
 													}
 												}
 											}
 											// loop through diagonal
-											int _piece, _to;
-											for (int i = 0; i < c; i += 1){
+											short _piece, _to;
+											for (short i = 0; i < c; i += 1){
 												if (capture) break;
 												_piece = _diagonal[i];
 												if (board[_piece].value & (color ^ CHANGECOLOR)){
-													for (int k = i + 1; k < c; k += 1){
+													for (short k = i + 1; k < c; k += 1){
 														if (capture) break;
 														_to = _diagonal[k];
 														if (piece == _piece || board[_to].value != FREE)
@@ -845,7 +845,7 @@ void get_capture(
 							} // for-loop (_diagonals[])
 
 							if (!capturables){
-								for (int i = 0; i < non_captble->length; i++){
+								for (short i = 0; i < non_captble->length; i++){
 									available_captures += 1;
 									get_capture(
 										board, color, KING, &C(_from, piece, non_captble->a[i]),
@@ -887,7 +887,7 @@ void get_capture(
 /**
  *  Determine if MAN can jump from a particular square to another
  */
-inline bool can_capture(field board[BOARD_SIZE], int color, int from, int piece, int to){
+inline bool can_capture(field board[BOARD_SIZE], short color, short from, short piece, short to){
 	return (board[from].value & color) && (board[piece].value & (color ^ CHANGECOLOR))
 	  && (board[to].value == FREE);
 }
@@ -901,7 +901,7 @@ inline bool can_capture(field board[BOARD_SIZE], int color, int from, int piece,
 inline void domove(Gamestate * game, Move * move){
 	bool moved = false;
 
-	int to=0,     // this moves' ending square
+	short to=0,     // this moves' ending square
 		who,    // who is moving, black or white
 		piece;  // the jumping piece
 
@@ -909,7 +909,7 @@ inline void domove(Gamestate * game, Move * move){
 	if (!move->is_capture){
 		// a move
 		if (game->board[(_M1(move).to)].value & FREE){
-			int from = (_M1(move).from);
+			short from = (_M1(move).from);
 
 			piece = game->board[(_M1(move).from)].value; // jumping piece
 			to = (_M1(move).to);
@@ -922,8 +922,8 @@ inline void domove(Gamestate * game, Move * move){
 		}
 	} else {
 		// a capture
-		for (int i = 0; i < move->length; i += 1){
-			int from = move->list[i].from,
+		for (short i = 0; i < move->length; i += 1){
+			short from = move->list[i].from,
 				p = move->list[i].piece,
 
 				_piece = game->board[p].value;    // piece beign jumped
@@ -1014,7 +1014,7 @@ inline void domove(Gamestate * game, Move * move){
 inline void undomove(Gamestate * game, Move * move){
 	bool moved = false;
 
-	int from,    // where piece was before domove()
+	short from,    // where piece was before domove()
 		who;     // who jumped, black or white
 
 
@@ -1023,8 +1023,8 @@ inline void undomove(Gamestate * game, Move * move){
 		if (game->board[(_M1(move).from)].value & FREE){
 			from = (_M1(move).from);
 
-			int to = (_M1(move).to);
-			int piece = game->board[to].value;
+			short to = (_M1(move).to);
+			short piece = game->board[to].value;
 
 			game->board[to].value = FREE;
 			game->board[from].value = piece;
@@ -1035,14 +1035,14 @@ inline void undomove(Gamestate * game, Move * move){
 		}
 	} else {
 		// undo capture
-		for (int i = move->length-1, l = move->l; i >= 0; i -= 1){
+		for (short i = move->length-1, l = move->l; i >= 0; i -= 1){
 			from = move->list[i].from;
 
-			int p = move->list[i].piece;
-			int to = move->list[i].to;
+			short p = move->list[i].piece;
+			short to = move->list[i].to;
 
-			int piece = game->board[to].value;      // jumping piece
-			int _piece = move->captured[--l].value; // captured piece
+			short piece = game->board[to].value;      // jumping piece
+			short _piece = move->captured[--l].value; // captured piece
 
 			game->board[from].value = game->board[to].value;
 			game->board[p].value = _piece;
@@ -1084,7 +1084,7 @@ inline void undomove(Gamestate * game, Move * move){
 }
 
 
-int make_prime(int n){
+short make_prime(short n){
    if ((n & 1) == 0) n -= 1;
    while (!is_prime(n)) n -= 2;
    return n;
@@ -1104,7 +1104,7 @@ bool is_prime(long n){
 //////////////////
 
 #define swap_move(x, y) {mtmp = *x; *x = *y, *y = mtmp;}
-#define swap_int(x, y) {itmp = *x; *x = *y, *y = itmp;}
+#define swap_short(x, y) {itmp = *x; *x = *y, *y = itmp;}
 
 
 // Insertion sort algorithm
@@ -1115,7 +1115,7 @@ void insertion_sort( Move arr[], int sortVals[], int first_index, int last_index
 		j = i;
 		while (j > 0 && sortVals[j] > sortVals[j-1]) {
 			swap_move(&arr[j], &arr[j-1]);
-			swap_int(&sortVals[j], &sortVals[j-1]);
+			swap_short(&sortVals[j], &sortVals[j-1]);
 			j--;
 		}
 	}
@@ -1123,7 +1123,7 @@ void insertion_sort( Move arr[], int sortVals[], int first_index, int last_index
 
 // QuickSort algorithm
 void quick_sort( Move array[], int sortVals[], int first_index, int last_index) {
-	register int
+	register short
 		i = first_index,
 		j = last_index,
 		itmp;
@@ -1135,7 +1135,7 @@ void quick_sort( Move array[], int sortVals[], int first_index, int last_index) 
 		while (sortVals[i] > pivot) i++;
 		while (sortVals[j] < pivot) j--;
 		if (i < j) {
-			swap_int(&sortVals[i], &sortVals[j]);
+			swap_short(&sortVals[i], &sortVals[j]);
 			swap_move(&array[i], &array[j]);
 		}
 		if (i <= j) i++, j--;

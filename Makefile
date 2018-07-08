@@ -7,6 +7,7 @@ SRC_PRFTEST = test/perft_test.c
 
 DLL = build/Kodra.dll
 DEF = build/kodra.def
+
 P_T = test/test
 P_F = test/perft
 

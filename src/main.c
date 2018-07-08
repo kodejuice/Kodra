@@ -143,7 +143,7 @@ int WINAPI enginecommand (char str[256], char reply[1024]) {
 		}
 
 		if (strcmp (param1, "hashsize") == 0) {
-			sprintf (reply, "Deep tt size => %dmb\nBig tt size %dmb", DEEP_HASHTABLE_SIZE/ts, BIG_HASHTABLE_SIZE/ts);
+			sprintf (reply, "Deep TT size => %dmb\n\nBig TT size => %dmb", DEEP_HASHTABLE_SIZE/ts, BIG_HASHTABLE_SIZE/ts);
 			return 1;
 		} 
 	}

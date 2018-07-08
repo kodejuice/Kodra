@@ -261,6 +261,10 @@ void to_movenotation(Move* capt, char* s){
 }
 
 
+///////////////
+// DEBUG ISH //
+///////////////
+
 /**
  * Print move notation
  */

@@ -9,7 +9,7 @@ It uses an improved alphaBeta method with several other optimizations, to make t
 
 ### Build
 
-This repo contains the **dll** which you can use with the CheckerBoard program, you can also build manually by running,
+This repo contains the **dll** which you can use with the CheckerBoard program ([`Kodra32`](https://github.com/kodejuice/kodra/tree/master/Kodra32.dll) and [`Kodra64`](https://github.com/kodejuice/kodra/tree/master/Kodra64.dll)), you can also build manually by running,
 
 ```bash
 make dll

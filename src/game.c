@@ -18,8 +18,12 @@
 #ifndef min
 	#define min(x, y) ((x) < (y)) ? (x) : (y)
 	#define max(x, y) ((x) > (y)) ? (x) : (y)
+#endif
+
+#ifndef CLK_TCK
 	#define CLK_TCK CLOCKS_PER_SEC
 #endif
+
 
 
 /* DEBUG UTIL */
